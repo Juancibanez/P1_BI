@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button, Form, Col, Spinner } from 'react-bootstrap'
 import { FaArrowLeft, FaRedo, FaSearch } from 'react-icons/fa'
 
-const FileOpinionForm = ({
+const FileNewsForm = ({
   clearResults,
   loading,
   onBack,
@@ -84,4 +84,4 @@ const FileOpinionForm = ({
   )
 }
 
-export default FileOpinionForm
+export default FileNewsForm

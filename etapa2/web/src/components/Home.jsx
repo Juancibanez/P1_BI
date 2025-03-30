@@ -1,15 +1,13 @@
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; // Importa Link
+import { Link } from 'react-router-dom';
 import NavBar from './NavBar';
 import Footer from './Footer';
 
 const Home = () => {
   return (
     <>
-      {/* Header */}
       <NavBar />
 
-      {/* Hero Section */}
       <Container fluid className='text-center bg-light py-5'>
         <h1 className='display-4'>
           Clasifica noticias falsas
@@ -18,12 +16,12 @@ const Home = () => {
           Automatiza el la clasificación de noticias falsas.
         </p>
         <div className='mt-4'>
-          <Link to="/predict"> {/* Cambiar href a Link */}
+          <Link to="/predict">
             <Button variant='primary' size='lg' className='me-3'>
               Analizar Noticias
             </Button>
           </Link>
-          <Link to="/retrain"> {/* Cambiar href a Link */}
+          <Link to="/retrain">
             <Button variant='outline-primary' size='lg'>
               Reentrenar Modelo
             </Button>
@@ -31,7 +29,6 @@ const Home = () => {
         </div>
       </Container>
 
-      {/* Functionalities Section */}
       <Container className='py-5'>
         <Row>
           <Col md={6} className='mb-4'>
@@ -41,7 +38,7 @@ const Home = () => {
                 <Card.Text>
                   Envía noticias y descubre si es falsa o verdadera.
                 </Card.Text>
-                <Link to="/predict"> {/* Cambiar href a Link */}
+                <Link to="/predict">
                   <Button variant='primary'>
                     Acceder
                   </Button>
@@ -57,7 +54,7 @@ const Home = () => {
                   Sube nuevos datos y mejora el modelo de análisis
                   automáticamente.
                 </Card.Text>
-                <Link to="/retrain"> {/* Cambiar href a Link */}
+                <Link to="/retrain">
                   <Button variant='outline-primary'>
                     Acceder
                   </Button>
@@ -68,7 +65,6 @@ const Home = () => {
         </Row>
       </Container>
 
-      {/* Footer */}
       <Footer />
     </>
   );
