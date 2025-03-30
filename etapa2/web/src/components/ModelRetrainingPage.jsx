@@ -95,7 +95,7 @@ const ModelRetrainingPage = () => {
         <h2 className='text-center'>Reentrenar Modelo</h2>
         <Form>
           <Form.Group controlId='formFile' className='mb-3'>
-            <Form.Label>Selecciona un archivo (Excel/CSV)</Form.Label>
+            <Form.Label>Selecciona un archivo (CSV)</Form.Label>
             <Form.Control
               type='file'
               accept='.xls, .xlsx, .csv'
@@ -104,7 +104,7 @@ const ModelRetrainingPage = () => {
           </Form.Group>
 
           <Form.Group controlId='opinionColumn' className='mb-3'>
-            <Form.Label>Nombre de la columna de opiniones</Form.Label>
+            <Form.Label>Nombre de la columna de noticias</Form.Label>
             <Form.Control
               type='text'
               value={opinionColumn}

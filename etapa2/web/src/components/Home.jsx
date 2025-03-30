@@ -12,16 +12,15 @@ const Home = () => {
       {/* Hero Section */}
       <Container fluid className='text-center bg-light py-5'>
         <h1 className='display-4'>
-          Relacionando Opiniones Ciudadanas con los ODS
+          Clasifica noticias falsas
         </h1>
         <p className='lead'>
-          Automatiza el análisis de opiniones para los Objetivos de Desarrollo
-          Sostenible.
+          Automatiza el la clasificación de noticias falsas.
         </p>
         <div className='mt-4'>
           <Link to="/predict"> {/* Cambiar href a Link */}
             <Button variant='primary' size='lg' className='me-3'>
-              Analizar Opiniones
+              Analizar Noticias
             </Button>
           </Link>
           <Link to="/retrain"> {/* Cambiar href a Link */}
@@ -38,10 +37,9 @@ const Home = () => {
           <Col md={6} className='mb-4'>
             <Card>
               <Card.Body className='text-center'>
-                <Card.Title>Analizar Opiniones</Card.Title>
+                <Card.Title>Analizar Noticias</Card.Title>
                 <Card.Text>
-                  Envía opiniones y descubre cómo se relacionan con los ODS 3, 4
-                  y 5.
+                  Envía noticias y descubre si es falsa o verdadera.
                 </Card.Text>
                 <Link to="/predict"> {/* Cambiar href a Link */}
                   <Button variant='primary'>

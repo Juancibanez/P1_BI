@@ -5,9 +5,6 @@ const Footer = () => {
     <footer className="bg-light text-center py-4">
       <Container>
         <p className="mb-0">
-          © 2024 UNFPA | Política de Privacidad
-        </p>
-        <p className="mb-0">
           Este proyecto fue realizado para el curso 'ISIS 3301 - Inteligencia de Negocios' de la Universidad de los Andes.
         </p>
       </Container>

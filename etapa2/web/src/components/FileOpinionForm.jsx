@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Form, Col, Spinner, Alert } from 'react-bootstrap'
+import { Button, Form, Col, Spinner } from 'react-bootstrap'
 import { FaArrowLeft, FaRedo, FaSearch } from 'react-icons/fa'
 
 const FileOpinionForm = ({
@@ -10,24 +10,22 @@ const FileOpinionForm = ({
   setError,
 }) => {
   const [file, setFile] = useState(null)
-  const [columnName, setColumnName] = useState('')
   const [showRefresh, setShowRefresh] = useState(false)
 
   const handleFileUpload = (event) => {
     const uploadedFile = event.target.files[0]
     const fileExtension = uploadedFile.name.split('.').pop().toLowerCase()
 
-    if (['xls', 'xlsx', 'csv'].includes(fileExtension)) {
+    if (fileExtension === 'csv') {
       setFile(uploadedFile)
       setError(null)
     } else {
-      setError('Por favor, sube un archivo válido (Excel o CSV).')
+      setError('Por favor, sube un archivo válido (CSV).')
     }
   }
 
   const handleRefresh = () => {
     setFile(null)
-    setColumnName('')
     clearResults()
     setError(null)
     setShowRefresh(false)
@@ -35,27 +33,18 @@ const FileOpinionForm = ({
 
   const handlePredict = () => {
     setShowRefresh(true)
-    onSubmit(file, columnName)
+    onSubmit(file)
   }
 
   return (
     <Col md={6} className='mx-auto'>
-      <h4 className='text-center'>Subir Archivo (Excel/CSV)</h4>
+      <h4 className='text-center'>Subir Archivo (CSV)</h4>
 
       <Form.Group>
         <Form.Control 
           type='file' 
-          accept='.xls, .xlsx, .csv' 
+          accept='.csv' 
           onChange={handleFileUpload} 
-        />
-      </Form.Group>
-
-      <Form.Group className='mt-3'>
-        <Form.Control
-          type='text'
-          placeholder='Nombre de la columna con los textos'
-          value={columnName}
-          onChange={(e) => setColumnName(e.target.value)}
         />
       </Form.Group>
 

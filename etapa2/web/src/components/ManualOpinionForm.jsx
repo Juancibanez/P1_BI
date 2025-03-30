@@ -53,12 +53,12 @@ const ManualOpinionForm = ({
 
   return (
     <Col md={6} className='mx-auto'>
-      <h4 className='text-center'>Agregar Opinión</h4>
+      <h4 className='text-center'>Agregar Noticia</h4>
 
       <InputGroup className='mb-3'>
         <Form.Control
           type='text'
-          placeholder='Escribe tu opinión...'
+          placeholder='Escribe tu noticia...'
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           onKeyUp={handleKeyPress}
@@ -70,7 +70,7 @@ const ManualOpinionForm = ({
 
       {opinions.length > 0 && showOpinions && (
         <>
-          <h4 className='text-center'>Opiniones Ingresadas</h4>
+          <h4 className='text-center'>Noticias Ingresadas</h4>
           <ListGroup className='mt-3'>
             {opinions.map((opinion, index) => (
               <ListGroup.Item

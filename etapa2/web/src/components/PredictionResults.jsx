@@ -1,16 +1,11 @@
 import { useState } from 'react'
 import { ListGroup, ProgressBar, Pagination, Button } from 'react-bootstrap'
 
-const ODS_DESCRIPTIONS = {
-  3: 'Salud y bienestar',
-  4: 'Educación de calidad',
-  5: 'Igualdad de género',
-}
-
 const ITEMS_PER_PAGE_OPTIONS = [10, 15, 20, 50, 100]
 
 const PredictionResults = ({ results, opinions }) => {
-  const colors = ['#4c9f38', '#c5192d', '#ff3a21']
+  // Se definen dos colores: uno para "Noticia Verdadera" (0) y otro para "Noticia Falsa" (1)
+  const colors = ['#4c9f38', '#c5192d']
 
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
@@ -33,6 +28,7 @@ const PredictionResults = ({ results, opinions }) => {
     startIndex + itemsPerPage
   )
 
+  // Lógica para la paginación
   const pageLimit = 11
   const pagesToShow = []
   let firstPage = Math.max(1, currentPage - Math.floor(pageLimit / 2))
@@ -46,6 +42,7 @@ const PredictionResults = ({ results, opinions }) => {
     pagesToShow.push(i)
   }
 
+  // Función para expandir o contraer la descripción si es muy larga
   const toggleExpansion = (index) => {
     setExpandedOpinions((prev) => ({
       ...prev,
@@ -57,7 +54,7 @@ const PredictionResults = ({ results, opinions }) => {
     <>
       <div className='mb-3'>
         <label htmlFor='itemsPerPage' className='me-2'>
-          Opiniones por página:
+          Noticias por página:
         </label>
         <select
           id='itemsPerPage'
@@ -78,63 +75,72 @@ const PredictionResults = ({ results, opinions }) => {
 
       <ListGroup>
         {selectedOpinions.map((opinion, index) => {
-          const opinionWords = opinion.split(' ')
+          const descriptionWords = opinion.Descripcion.split(' ')
+          const displayDescription =
+            expandedOpinions[index] || descriptionWords.length <= 50
+              ? opinion.Descripcion
+              : descriptionWords.slice(0, 50).join(' ') + '...'
 
-          const displayOpinion =
-            expandedOpinions[index] || opinionWords.length <= 50
-              ? opinion
-              : opinionWords.slice(0, 50).join(' ') + '...'
+          const prediction = selectedPredictions[index]
+          const predictionLabel =
+            prediction === 0 ? 'Noticia Verdadera' : 'Noticia Falsa'
 
           return (
             <ListGroup.Item
-              key={index}
-              className='d-flex align-items-center'
+              key={opinion.ID}
+              className='d-flex flex-column align-items-md-start'
               style={{ gap: '20px' }}
             >
-              <div style={{ flex: '0 0 40%', overflow: 'hidden' }}>
-                <span>{displayOpinion}</span>
-                {opinionWords.length > 50 && (
-                  <Button
-                    variant='link'
-                    onClick={() => toggleExpansion(index)}
-                    className='p-0 ms-2'
-                  >
-                    {expandedOpinions[index] ? 'Ver menos' : 'Ver más'}
-                  </Button>
-                )}
+              <div style={{ width: '100%' }}>
+                <h5>{opinion.Titulo}</h5>
+                <p>
+                  {displayDescription}
+                  {descriptionWords.length > 50 && (
+                    <Button
+                      variant='link'
+                      onClick={() => toggleExpansion(index)}
+                      className='p-0 ms-2'
+                    >
+                      {expandedOpinions[index] ? 'Ver menos' : 'Ver más'}
+                    </Button>
+                  )}
+                </p>
+                <p>
+                  <small>{opinion.Fecha}</small>
+                </p>
               </div>
               <div
                 style={{
-                  flex: '0 0 20%',
                   display: 'flex',
                   alignItems: 'center',
+                  gap: '20px',
+                  width: '100%',
                 }}
               >
-                <strong className='me-2'>
-                  ODS {selectedPredictions[index]}:
-                </strong>
-                <span>{ODS_DESCRIPTIONS[selectedPredictions[index]]}</span>
-              </div>
-              <div style={{ flex: '1' }}>
-                <ProgressBar style={{ height: '30px' }}>
-                  {selectedProbabilities[index].map((prob, i) => (
-                    <ProgressBar
-                      now={prob * 100}
-                      key={i}
-                      style={{
-                        backgroundColor: colors[i],
-                        height: '30px',
-                        fontWeight: 'bold',
-                      }}
-                      title={`ODS ${i + 3}: ${(prob * 100).toFixed(2)}%`}
-                      label={`${i + 3}`}
-                    >
-                      <span style={{ color: 'white', fontWeight: 'bold' }}>
-                        {i + 3}
-                      </span>
-                    </ProgressBar>
-                  ))}
-                </ProgressBar>
+                <div style={{ flex: '0 0 30%' }}>
+                  <strong>{predictionLabel}</strong>
+                </div>
+                <div style={{ flex: '1' }}>
+                  <ProgressBar style={{ height: '30px' }}>
+                    {selectedProbabilities[index].map((prob, i) => (
+                      <ProgressBar
+                        now={prob * 100}
+                        key={i}
+                        style={{
+                          backgroundColor: colors[i],
+                          height: '30px',
+                          fontWeight: 'bold',
+                        }}
+                        title={
+                          i === 0
+                            ? `Verdadera: ${(prob * 100).toFixed(2)}%`
+                            : `Falsa: ${(prob * 100).toFixed(2)}%`
+                        }
+                        label={i === 0 ? '0' : '1'}
+                      />
+                    ))}
+                  </ProgressBar>
+                </div>
               </div>
             </ListGroup.Item>
           )

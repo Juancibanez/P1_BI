@@ -10,7 +10,7 @@ const SelectMethod = ({ onSelect }) => {
           className='m-2'
           onClick={() => onSelect('manual')}
         >
-          Ingresar Opiniones Manualmente
+          Ingresar Noticias Manualmente
         </Button>
         <Button
           variant='outline-primary'

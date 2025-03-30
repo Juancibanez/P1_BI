@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { Container, Row, Col, Alert } from 'react-bootstrap'
 import axios from 'axios'
-import * as XLSX from 'xlsx'
+import Papa from 'papaparse'
+import { useState } from 'react'
 import NavBar from './NavBar'
 import Footer from './Footer'
 import SelectMethod from './SelectMethod'
@@ -19,9 +19,8 @@ const OpinionAnalysisPage = () => {
   const predictManualOpinions = async () => {
     try {
       setLoading(true)
-      const response = await axios.post('http://localhost:8000/predict/', {
-        texts: opinions,
-      })
+      // Se envía directamente la lista de opiniones
+      const response = await axios.post('http://localhost:8000/predict/', opinions)
       setResults(response.data)
       setError(null)
     } catch (error) {
@@ -32,39 +31,46 @@ const OpinionAnalysisPage = () => {
     }
   }
 
-  const predictFromFile = (file, columnName) => {
-    if (!file || !columnName) {
-      setError('Sube un archivo e ingresa el nombre de la columna.')
+  const predictFromFile = (file) => {
+    if (!file) {
+      setError('Sube un archivo.')
       return
     }
 
     const reader = new FileReader()
     reader.onload = (event) => {
-      const binaryStr = event.target.result
-      const workbook = XLSX.read(binaryStr, { type: 'binary' })
-      const sheetName = workbook.SheetNames[0]
-      const sheet = workbook.Sheets[sheetName]
-      const data = XLSX.utils.sheet_to_json(sheet)
-      const texts = data.map((row) => row[columnName])
-
-      if (texts.length > 0) {
-        setOpinions(texts)
-        setLoading(true)
-        axios
-          .post('http://localhost:8000/predict/', { texts })
-          .then((response) => {
-            setResults(response.data)
-            setError(null)
-          })
-          .catch((error) => {
-            setError('Error al realizar la predicción')
-            console.error(error)
-          })
-          .finally(() => setLoading(false))
-      }
+      const csvData = event.target.result
+      Papa.parse(csvData, {
+        header: true, // Se asume que el CSV tiene encabezado
+        complete: (results) => {
+          const data = results.data
+          console.log(data)
+          // Se espera que cada objeto tenga las columnas: ID, Titulo, Descripcion, Fecha
+          if (data.length > 0) {
+            setOpinions(data)
+            setLoading(true)
+            // Se envía directamente el arreglo de objetos como body
+            axios
+              .post('http://localhost:8000/predict', data)
+              .then((response) => {
+                setResults(response.data)
+                setError(null)
+              })
+              .catch((error) => {
+                setError('Error al realizar la predicción')
+                console.error(error)
+              })
+              .finally(() => setLoading(false))
+          }
+        },
+        error: (error) => {
+          setError('Error al parsear el archivo CSV')
+          console.error(error)
+        }
+      })
     }
 
-    reader.readAsBinaryString(file)
+    reader.readAsText(file)
   }
 
   const resetMethod = () => {
@@ -78,7 +84,7 @@ const OpinionAnalysisPage = () => {
     <>
       <NavBar />
       <Container className='py-5'>
-        <h1 className='mb-4'>Análisis de Opiniones y ODS</h1>
+        <h1 className='mb-4'>Análisis de Noticias Falsas</h1>
 
         {!method && <SelectMethod onSelect={setMethod} />}
 
@@ -102,7 +108,6 @@ const OpinionAnalysisPage = () => {
               onSubmit={predictFromFile}
               loading={loading}
               onBack={resetMethod}
-              opinions={opinions}
               clearResults={() => setResults(null)}
               setError={setError}
             />
