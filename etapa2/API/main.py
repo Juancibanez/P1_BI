@@ -1,24 +1,56 @@
-from typing import Optional
-from fastapi import FastAPI
-from pydantic import BaseModel
+import logging
+from typing import List
+
 import pandas as pd
-import DataModel
-from joblib import load
+from fastapi import FastAPI, HTTPException
+
+from DataModel import NewsInput, NewsRetrain
+from utils import predict_proba, retrain_model
 
 app = FastAPI()
+
+logging.basicConfig(filename='model_logs.log',
+                    level=logging.INFO,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
-
 @app.post("/predict")
-def make_predictions(dataModel: DataModel):
-    df = pd.DataFrame(dataModel.dict(), columns=dataModel.dict().keys(), index=[0])
-    df.columns = dataModel.columns()
-    model = load("assets/modelRF.joblib")
-    result = model.predict(df)
-    return {"prediction": result.tolist()}
+def predict(news: List[NewsInput]):
+    logging.info(f"Datos recibidos para prediccion: {news}")
+    try:
+        df = pd.DataFrame([news_item.model_dump() for news_item in news])
+
+        predictions, probabilities = predict_proba(df['Descripcion'])
+
+        logging.info(f"Predicciones: {predictions}")
+        logging.info(f"Probabilidades: {probabilities}")
+
+        return {
+            "predictions": predictions.tolist(),
+            "probabilities": probabilities.tolist()
+        }
+    except Exception as e:
+        logging.error(f"Error en la prediccion: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error en la prediccion")
+
+
+@app.post("/retrain")
+def retrain(news: List[NewsRetrain]):
+    logging.info(f"Datos recibidos para reentrenar: {news}")
+    try:
+        df = pd.DataFrame([news_item.model_dump() for news_item in news])
+
+        precision, recall, f1 = retrain_model(df['Descripcion'], df['Label'])
+
+        logging.info(f"Metricas tras reentrenamiento - Precision: {precision}, Recall: {recall}, F1: {f1}")
+        return {
+            "precision": precision,
+            "recall": recall,
+            "f1": f1
+        }
+    except Exception as e:
+        logging.error(f"Error en el reentrenamiento: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error en el reentrenamiento")

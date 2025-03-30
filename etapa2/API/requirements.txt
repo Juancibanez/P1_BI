@@ -1,0 +1,8 @@
+contractions
+fastapi
+joblib
+pandas
+scikit-learn
+uvicorn[standard]
+nltk
+num2words
