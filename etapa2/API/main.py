@@ -7,11 +7,25 @@ from fastapi import FastAPI, HTTPException
 from DataModel import NewsInput, NewsRetrain
 from utils import predict_proba, retrain_model
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 
 logging.basicConfig(filename='model_logs.log',
                     level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s')
+
+origins = [
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
